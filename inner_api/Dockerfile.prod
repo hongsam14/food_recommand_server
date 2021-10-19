@@ -1,0 +1,55 @@
+###########
+# BUILDER #
+###########
+
+FROM python:3.9.6-alpine as builder
+
+WORKDIR /usr/src/app
+# set environment variables
+# python이 pyc파일을 디스크에 쓰는 것을 방지.
+ENV PYTHONDONTWRITEBYTECODE 1
+# python이 stdout, stderr를 버퍼링하는 것을 방지.
+ENV PYTHONUNBUFFERED 1
+# install psycopg2 dependencies
+RUN apk update \
+	&& apk add postgresql-dev \
+		gcc \
+		python3-dev \
+		musl-dev \
+# install dependencies
+	&& pip install --upgrade pip
+COPY ./requirement.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirement.txt
+
+#########
+# FINAL #
+#########
+
+FROM python:3.9.6-alpine
+# create directory for the app user
+RUN mkdir -p /home/app
+# create the app user
+RUN addgroup -S app && adduser -S app -G app
+# create the appropriate directories
+ENV HOME=/home/app
+ENV INNER_API_HOME=/home/app/inner_api
+RUN mkdir $INNER_API_HOME
+RUN mkdir $INNER_API_HOME/staticfiles
+WORKDIR $INNER_API_HOME
+# install dependencies
+RUN apk update && apk add libpq
+COPY --from=builder /usr/src/app/wheels /wheels
+COPY --from=builder /usr/src/app/requirement.txt .
+RUN pip3 install --no-cache /wheels/*
+# copy entrypoint.prod.sh
+COPY ./entrypoint.prod.sh .
+RUN sed -i 's/\r$//g' $INNER_API_HOME/entrypoint.prod.sh
+RUN chmod +x  $INNER_API_HOME/entrypoint.prod.sh
+# copy project
+COPY . $INNER_API_HOME
+# chown all the files to the app user
+RUN chown -R app:app $INNER_API_HOME
+# change to the app user
+USER app
+# run entrypoint.prod.sh
+ENTRYPOINT [ "/home/app/inner_api/entrypoint.prod.sh" ]

@@ -1,0 +1,2 @@
+2021-10-04 16:45:59.829 KST [30525] FATAL:  data directory "/Users/hongseonghyeon/Desktop/2s2h/API_server/rest_server/foodpool" has invalid permissions
+2021-10-04 16:45:59.829 KST [30525] DETAIL:  Permissions should be u=rwx (0700) or u=rwx,g=rx (0750).
