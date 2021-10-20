@@ -14,3 +14,6 @@ class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = ['id', 'email', 'picked_food_list', 'like_food_list', 'dislike_food_list']
+
+class ResultSerializer(serializers.Serializer):
+    pickFood = FoodSerializer(many=True)

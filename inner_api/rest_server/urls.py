@@ -25,12 +25,13 @@ import food_recommand.api
 
 app_name = food_recommand
 
-router = routers.DefaultRouter()
-router.register(r'rest/pick-food', views.pick_foodViewSet, basename='Food')
+# router = routers.DefaultRouter()
+# router.register(r'rest/pick-food', views.pick_foodViewSet, basename='Food')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    path('rest/pick-food/', views.pickFood),
+    # path('', include(router.urls)),
 ]
 
 # urlpatterns = format_suffix_patterns(urlpatterns)
