@@ -12,7 +12,7 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
 from food_recommand.models import Food, SelectedFood, Member
-from food_recommand.api import FoodSerializer, MemberSerializer
+from food_recommand.api import FoodSerializer, MemberSerializer, ResultSerializer
 import json
 import random
 
