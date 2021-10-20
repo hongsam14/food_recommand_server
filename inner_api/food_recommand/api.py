@@ -8,7 +8,7 @@ class FoodSerializer(serializers.ModelSerializer):
         # 모델 설정
         model = Food
         # 필드 설정
-        fields = ['id', 'name']
+        fields = ['name', 'youtube_url']
 
 class MemberSerializer(serializers.ModelSerializer):
     class Meta:

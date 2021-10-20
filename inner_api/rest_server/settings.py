@@ -79,20 +79,12 @@ WSGI_APPLICATION = 'rest_server.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'foodpool',
-    #     'USER': 'admin',
-    #     'PASSSWORD': 'secret',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432',
-    # }
     'default': {
-        'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.postgresql_psycopg2'),
+        'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.db.sqlite3'),
         'NAME': os.environ.get("SQL_DATABASE", "selectfood"),
-        'USER': os.environ.get("SQL_USER", "postgres"),
+        'USER': os.environ.get("SQL_USER", "user"),
         'PASSWORD': os.environ.get("SQL_PASSWORD", "pass"),
-        'HOST': os.environ.get("SQL_HOST", "13.125.5.165"),
+        'HOST': os.environ.get("SQL_HOST", "localhost"),
         'PORT': os.environ.get("SQL_PORT", "5432"),
     }
 }

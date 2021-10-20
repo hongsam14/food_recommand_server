@@ -26,7 +26,7 @@ import food_recommand.api
 app_name = food_recommand
 
 router = routers.DefaultRouter()
-router.register(r'pick-food', views.pick_foodViewSet, basename='Food')
+router.register(r'rest/pick-food', views.pick_foodViewSet, basename='Food')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
