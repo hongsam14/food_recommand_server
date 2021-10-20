@@ -15,6 +15,7 @@ from django.http import HttpResponse, JsonResponse
 import json
 
 import random
+import urllib
 
 def food_recommand(email, a1, a2, a3):
     try:
@@ -26,7 +27,7 @@ def food_recommand(email, a1, a2, a3):
     ret += Food.objects.filter(id = random.randrange(1, size))
     ret += Food.objects.filter(id = random.randrange(1, size))
     ret += Food.objects.filter(id = random.randrange(1, size))
-    return list(ret)
+    return urllib.parse.quote(list(ret))
     
 class pick_foodViewSet(viewsets.ModelViewSet):
     
