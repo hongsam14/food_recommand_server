@@ -16,6 +16,7 @@ class Food(models.Model):
     youtube_url = models.CharField(max_length=200)
 
     class Meta:
+        managed = False
         db_table = 'food'
 
 

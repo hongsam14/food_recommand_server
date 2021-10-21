@@ -29,7 +29,7 @@ app_name = food_recommand
 # router.register(r'rest/pick-food', views.pick_foodViewSet, basename='Food')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('rest/pick-food/', views.pickFood),
     # path('', include(router.urls)),
 ]
