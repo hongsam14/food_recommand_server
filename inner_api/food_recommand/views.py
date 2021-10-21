@@ -16,9 +16,9 @@ from food_recommand.api import FoodSerializer, MemberSerializer, ResultSerialize
 import json
 import random
 
-def food_recommand(email, a1, a2, a3):
+def food_recommand(id, a1, a2, a3):
     try:
-        member = Member.objects.filter(email=email)
+        member = Member.objects.filter(id=id)
     except Member.DoesNotExist:
         return None
     ret = []
@@ -27,7 +27,7 @@ def food_recommand(email, a1, a2, a3):
     ret += Food.objects.filter(id = random.randrange(1, size))
     ret += Food.objects.filter(id = random.randrange(1, size))
     ret += Food.objects.filter(id = random.randrange(1, size))
-    return {"pickFood":ret, "email":email}
+    return {"pickFood":ret}
     # return [{"pickFood":ret}]
     
 # class pick_foodViewSet(viewsets.ModelViewSet):
@@ -45,7 +45,7 @@ def food_recommand(email, a1, a2, a3):
 @api_view(['GET'])
 def pickFood(request):
     if request.method == 'GET':
-        email = request.GET.get('email', None)
+        email = request.GET.get('id', None)
         a1 = request.GET.get('answer1', None)
         a2 = request.GET.get('answer2', None)
         a3 = request.GET.get('answer3', None)
