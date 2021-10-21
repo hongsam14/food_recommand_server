@@ -26,6 +26,7 @@ def food_recommand(email, a1, a2, a3):
     ret += Food.objects.filter(id = random.randrange(1, size))
     ret += Food.objects.filter(id = random.randrange(1, size))
     ret += Food.objects.filter(id = random.randrange(1, size))
+    ret += Food.objects.filter(id = random.randrange(1, size))
     return {"pickFood":ret, "email":email}
     # return [{"pickFood":ret}]
     
