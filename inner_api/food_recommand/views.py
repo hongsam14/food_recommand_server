@@ -18,29 +18,18 @@ import random
 
 def food_recommand(id, a1, a2, a3):
     try:
-        member = Member.objects.filter(id=id)
+        member = Member.objects.filter(member_id=id)
     except Member.DoesNotExist:
         return None
     ret = []
-    size = Food.objects.all().count()
-    ret += Food.objects.filter(id = random.randrange(1, size))
-    ret += Food.objects.filter(id = random.randrange(1, size))
-    ret += Food.objects.filter(id = random.randrange(1, size))
-    ret += Food.objects.filter(id = random.randrange(1, size))
+    pool = list(range(1, Food.objects.all().count()))
+    for _ in range(4):
+        pick = random.choice(pool)
+        ret += Food.objects.filter(food_id = pick)
+        pool.remove(pick)
     return {"pickFood":ret}
     # return [{"pickFood":ret}]
     
-# class pick_foodViewSet(viewsets.ModelViewSet):
-#     serializer_class = ResultSerializer
-#     # renderer_classes = [renderers.JSONRenderer]
-#     parser_classes = [parsers.JSONParser]    
-#     def get_queryset(self):
-#         email = self.request.GET.get('email', None)
-#         a1 = self.request.GET.get('answer1', None)
-#         a2 = self.request.GET.get('answer2', None)
-#         a3 = self.request.GET.get('answer3', None)
-#         return food_recommand(email, a1, a2, a3)
-
 @csrf_exempt
 @api_view(['GET'])
 def pickFood(request):

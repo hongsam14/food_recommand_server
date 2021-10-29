@@ -8,26 +8,43 @@
 from django.db import models
 
 
+class DislikeFood(models.Model):
+    dislike_food_id = models.BigIntegerField(primary_key=True)
+    food = models.ForeignKey('Food', models.DO_NOTHING, blank=True, null=True)
+    member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'dislike_food'
+
+
 class Food(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=100)
-    tag = models.CharField(max_length=200)
-    ingredient = models.CharField(max_length=200)
-    youtube_url = models.CharField(max_length=200)
+    food_id = models.BigIntegerField(primary_key=True)
+    ingredient = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    tag = models.CharField(max_length=255, blank=True, null=True)
+    youtube_url = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'food'
 
 
+class LikeFood(models.Model):
+    like_food_id = models.BigIntegerField(primary_key=True)
+    food = models.ForeignKey(Food, models.DO_NOTHING, blank=True, null=True)
+    member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'like_food'
+
+
 class Member(models.Model):
-    id = models.IntegerField(primary_key=True)
-    nick_name = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-    picked_food_list = models.CharField(max_length=200, blank=True, null=True)
-    like_food_list = models.CharField(max_length=200, blank=True, null=True)
-    dislike_food_list = models.CharField(max_length=200, blank=True, null=True)
+    member_id = models.BigIntegerField(primary_key=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
+    nick_name = models.CharField(max_length=255, blank=True, null=True)
+    password = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -35,9 +52,9 @@ class Member(models.Model):
 
 
 class SelectedFood(models.Model):
-    selected_food_id = models.IntegerField(primary_key=True)
-    member = models.ForeignKey(Member, models.DO_NOTHING)
-    food = models.ForeignKey(Food, models.DO_NOTHING)
+    select_food_id = models.BigIntegerField(primary_key=True)
+    food = models.ForeignKey(Food, models.DO_NOTHING, blank=True, null=True)
+    member = models.ForeignKey(Member, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
