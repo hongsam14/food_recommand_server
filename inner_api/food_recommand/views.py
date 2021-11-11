@@ -16,19 +16,42 @@ from food_recommand.api import FoodSerializer, ResultSerializer
 import json
 import random
 
+def add_by_answer(food_table:list, a1:str, a2:str, a3:str):
+    a1_list = a1.split(',')
+    a2_list = a2.split(',')
+    a3_list = a3.split(',')
+    for i in food_table:
+        for j in a1_list:
+            if j in i[0][1]:
+                i[1] += 1
+        for k in a2_list:
+            if k in i[0][1]:
+                i[1] += 1
+        for l in a3_list:
+            if l in i[0][1]:
+                i[1] += 1
+    food_table.sort(key=lambda x: -x[1])
+    return food_table[:4]
+
+def pick_random(query, count:int):
+    ret = []
+    pool = list(range(1, query.objects.all().count()))
+    for _ in range(count):
+        pick = random.choice(pool)
+        ret += query.objects.filter(food_id = pick)
+        pool.remove(pick)
+    return ret
+
 def food_recommand(id, a1, a2, a3):
     try:
         member = Member.objects.filter(member_id=id)
     except Member.DoesNotExist:
         return None
+    food_table = [[i, 0] for i in Food.objects.all().values_list('food_id', 'tag')]
     ret = []
-    pool = list(range(1, Food.objects.all().count()))
-    for _ in range(4):
-        pick = random.choice(pool)
-        ret += Food.objects.filter(food_id = pick)
-        pool.remove(pick)
+    for i in add_by_answer(food_table, a1, a2, a3):
+        ret += Food.objects.filter(food_id=i[0][0])
     return {"pickFood":ret}
-    # return [{"pickFood":ret}]
     
 @csrf_exempt
 @api_view(['GET'])
