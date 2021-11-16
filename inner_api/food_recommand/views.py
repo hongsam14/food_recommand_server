@@ -11,10 +11,12 @@ from rest_framework.parsers import JSONParser
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
-from food_recommand.models import Food, SelectedFood, Member
+from food_recommand.models import Food, SelectedFood, Member, LikeFood, DislikeFood
 from food_recommand.api import FoodSerializer, ResultSerializer
 import json
 import random
+import pandas as pd
+import numpy as np
 
 def add_by_answer(food_table:list, a1:str, a2:str, a3:str):
     a1_list = a1.split(',')
@@ -47,6 +49,24 @@ def food_recommand(id, a1, a2, a3):
         member = Member.objects.filter(member_id=id)
     except Member.DoesNotExist:
         return None
+    #init
+    _info = np.array(Food.objects.all().values_list('tag'))
+    av_card = np.zeros((Member.objects.all().count(), Food.objects.all().count()), int)
+    _liked = np.array(LikeFood.objects.all().values_list('member_id', 'food_id'), int)
+    _disliked = np.array(DislikeFood.objects.all().values_list('member_id', 'food_id'), int)
+    _selected = np.array(SelectedFood.objects.all().values_list('member_id', 'food_id'), int)
+    print(_selected)
+    #좋아하는 음식 +
+    for i in _liked:
+        av_card[i[0] - 1, i[1] - 1] += 1
+    #싫어하는 음식 -
+    for i in _disliked:
+        av_card[i[0] - 1, i[1] - 1] -= 1
+    #먹었던 음식 +
+    for i in _selected:
+        av_card[i[0] - 1, i[1] - 1] += 1
+    print(av_card)
+    #임시
     food_table = [[i, 0] for i in Food.objects.all().values_list('food_id', 'tag')]
     ret = []
     for i in add_by_answer(food_table, a1, a2, a3):
