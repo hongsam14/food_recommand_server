@@ -2,22 +2,30 @@
 # BUILDER #
 ###########
 
-FROM python:3.9.6-alpine as builder
+FROM ubuntu:20.04 as builder
 
 WORKDIR /usr/src/app
 # set environment variables
-# python이 pyc파일을 디스크에 쓰는 것을 방지.
 ENV PYTHONDONTWRITEBYTECODE 1
-# python이 stdout, stderr를 버퍼링하는 것을 방지.
 ENV PYTHONUNBUFFERED 1
 # install psycopg2 dependencies
-RUN apk update \
-	&& apk add postgresql-dev \
-		gcc \
+# install
+ARG DEBIAN_FRONTEND="noninteractive"
+ENV TZ=Asia/Seoul
+RUN apt-get update \
+	&& apt-get install -y postgresql \
 		python3-dev \
 		musl-dev \
+		pip \
+		gcc \
+		libpq-dev \
+		python3-pip \
+		build-essential \
 # install dependencies
 	&& pip install --upgrade pip
+# install pandas numpy
+#RUN echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories.
+#RUN apk add --update --no-cache py3-numpy py3-pandas@testing
 COPY ./requirement.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirement.txt
 
@@ -25,11 +33,11 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 # FINAL #
 #########
 
-FROM python:3.9.6-alpine
+FROM ubuntu:20.04
 # create directory for the app user
 RUN mkdir -p /home/app
 # create the app user
-RUN addgroup -S app && adduser -S app -G app
+RUN adduser --system app && addgroup --system app
 # create the appropriate directories
 ENV HOME=/home/app
 ENV INNER_API_HOME=/home/app/inner_api
@@ -37,10 +45,10 @@ RUN mkdir $INNER_API_HOME
 RUN mkdir $INNER_API_HOME/staticfiles
 WORKDIR $INNER_API_HOME
 # install dependencies
-RUN apk update && apk add libpq
+RUN apt-get update && apt-get install -y python3-pip
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirement.txt .
-RUN pip3 install --no-cache /wheels/*
+RUN pip install --no-cache /wheels/*
 # copy entrypoint.prod.sh
 COPY ./entrypoint.prod.sh .
 RUN sed -i 's/\r$//g' $INNER_API_HOME/entrypoint.prod.sh
